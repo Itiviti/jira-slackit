@@ -1,0 +1,5 @@
+#if (${channelId} && ${channelName})
+    <a href="${slackURL}/messages/${channelName}" target="_blank" title="${channelId}">${channelName}</a>
+#elseif (${channelId})
+    ${channelId}
+#end

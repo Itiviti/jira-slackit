@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>Slack It administration</title>
+    <meta name="decorator" content="atl.admin">
+  </head>
+  <body>
+      <section role="dialog" id="action-dialog" class="aui-layer aui-dialog2 aui-dialog2-warning" aria-hidden="true">
+          <!-- inner content -->
+    </section>
+    <header class="aui-page-header">
+        <div class="aui-page-header-inner">
+            <div class="aui-page-header-main">
+                <h2>SlackIt plugin administration</h2>
+            </div>
+        </div>
+    </header>
+    <body>
+    <div id="action-message"></div>
+    <div id="slackit-tabs" class="aui-tabs horizontal-tabs" role="application">
+        <ul class="tabs-menu" role="tablist">
+            <li class="menu-item active-tab" role="presentation">
+                <a id="tab-slackit-configuration" href="#slackit-configuration">Configuration</a>
+            </li>
+        </ul>
+        <div class="tabs-pane loaded active-pane" id="slackit-configuration">
+            <div class="stp-module-main-block">
+                #parse("templates/admin/slackit-admin-config.vm")
+            </div>
+        </div>
+    </div>        
+    
+    </body>
+    <script>
+    
+    </script>
+</html>

@@ -1,0 +1,127 @@
+<atlassian-plugin key="com.ullink.jira.slackit" name="Slack It" plugins-version="2">
+    <plugin-info>
+        <description>Link your JIRA issues and you Slack channels to create interactive and efficient discussions</description>
+        <version>${project.version}</version>
+		<vendor name="ULLINK SAS" url="https://www.ullink.com" />        
+        <application-version min="6.0" max="6.0"/>
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="plugin-banner">images/pluginBanner.png</param>
+		<param name="configure.url">/secure/SlackitSetup!default.jspa</param>        
+    </plugin-info>
+    
+    <servlet name="Slack OAuth Servlet" key="slackOauthCallback" class="com.ullink.jira.slackit.servlet.SlackOAuthCalbackServlet">
+        <description>Callback for slack</description>
+        <url-pattern>/slackOauthCallback</url-pattern>
+    </servlet>
+    
+     <servlet name="Slack Authorization Servlet" key="slackAuthorization" class="com.ullink.jira.slackit.servlet.SlackAuthorizationServlet">
+        <description>Slack</description>
+        <url-pattern>/slackAuthorization</url-pattern>
+    </servlet>
+    
+    <ao key="ao-module">
+	  <description>The module configuring the Active Objects service used by this plugin</description>
+	  <entity>com.ullink.jira.slackit.model.UserToken</entity>
+	</ao>
+    
+    <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+	    <decription>Processes @Transactional annotations.</decription>
+	</component>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="jira-custom-slack-it"/>
+    
+    <!-- add our web resources -->
+    <web-resource key="slackit-resources" name="Slackit Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-labels</dependency>
+
+        <resource type="download" name="slackit-users.css" location="css/slackit-users.css"/>
+        <resource type="download" name="rx-4.0.7.js" location="js/rx-4.0.7.js"/>
+        <resource type="download" name="slackit-users.js" location="js/slackit-users.js"/>
+        <resource type="download" name="images/" location="images"/>
+
+		<context>atl.general</context>
+
+		<!-- Commented as it not works in the search view, the js is not included-->
+        <!-- <context>ul-jira-custom-slack-it</context> -->
+    </web-resource>
+    
+       
+    <!-- import from the product container -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+    
+    <component key="slackUserToken-service" name="Token Service" class="com.ullink.jira.slackit.service.impl.UserTokenServiceImpl"/>
+    
+    <component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
+	  <description>Component to access Active Objects functionality from the plugin</description>
+	</component-import>
+	
+	<component key="SlackitConfigHolder" name="Slackit centralized configuration loader and provider" class="com.ullink.jira.slackit.managers.impl.SlackItConfigurationHolderImpl" public="true">
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+	    <interface>com.ullink.jira.slackit.managers.SlackItConfigurationHolder</interface>
+    </component>
+
+	<!-- Issue panel definition -->    
+	<web-panel name="SlackPanel" i18n-name-key="slack.panel.name" key="slack.panel" location="atl.jira.view.issue.right.context" weight="40">
+		<label>Slack It</label>
+		<description key="slack.panel.description">The slack panel Plugin</description>
+		<context-provider class="com.ullink.jira.slackit.fragments.SlackPanel"/>
+		<resource name="view" type="velocity" location="templates/fields/view-slack.vm"/>
+	</web-panel>
+    
+    <!-- Customfield definition -->
+     <customfield-type key="slackChannelCustomField" name="Slack channel custom field" class="com.ullink.jira.slackit.fields.SlackChannelCustomField">
+     	<label>Slack It</label>
+    	<description>Slack channel associated to an issue</description>
+       <resource type="velocity" name="view" location="templates/fields/slackit-customfield-view.vm"/>
+       <resource type="velocity" name="column-view" location="templates/fields/slackit-customfield-view.vm"/>
+       <resource type="velocity" name="edit" location="templates/plugins/fields/edit/edit-textarea.vm"/>
+       <resource type="velocity" name="xml" location="templates/fields/slackit-customfield-view.vm"/>
+		<valid-searcher package="com.atlassian.jira.plugin.system.customfieldtypes" key="textsearcher"/>
+		<resource type="download" name="customfieldpreview.png" location="images/customfieldpreview.png" />
+	</customfield-type>
+	
+	
+    <rest key="slackit.rest" path="/slackit" version="1.0">
+        <description>Provides the REST endpoints for SlackIt plugin</description>
+        <package>com.ullink.jira.slackit.admin.rest</package>
+    </rest>
+	
+	<!--  ADMIN PANEL -->
+	
+	<component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+	<component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
+	<component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
+	
+	<web-section key="slackit-admin-section" name="Slack It" location="admin_plugins_menu" weight="20">
+		<label>Slack It</label>
+		<description>Custom section for Slack It plugin administration</description> 
+	</web-section>
+
+	<web-item key="slackit-admin-setup-item" name="SlackIt" section="admin_plugins_menu/slackit-admin-section" weight="60" application="jira">
+		<label>Slack It setup</label>
+		<description>Slack It setup page</description> 
+		<condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+		    <param name="permission">admin</param>
+		</condition>		 
+		<link linkId="slackit-admin-setup-link">/secure/SlackitSetup!default.jspa</link>
+	</web-item>
+	
+	<webwork1 key="slackit-admin-actions" name="Actions from admin page" roles-required="sysadmin">
+	    <actions>
+	        <action name="com.ullink.jira.slackit.admin.SlakItAdminActions" alias="SlackitSetup" roles-required="sysadmin">
+	            <view name="input">templates/admin/slackit-admin.vm</view>
+	        	<command name="ConfigFileReload" alias="SlackitReloadConfig" roles-required="sysadmin"/>
+	        </action>
+	    </actions>
+	</webwork1>
+
+    <web-resource key="slackit-admin-resources" name="Slack it Admin Web Resources">
+		<resource type="download" name="slackit-admin.js" location="js/slackit-admin.js"/> 
+        <context>atl.admin</context>
+    </web-resource>
+
+</atlassian-plugin>

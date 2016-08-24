@@ -1,0 +1,159 @@
+##Commented as it not works in the search view, the js is not included 
+##$webResourceManager.requireResourcesForContext("slackit-resources")
+
+#if (!$token)
+    #set ($token = "")
+#end
+
+<div id="slackAuthorization" style="display: none;">
+It seems you never used Slack It, it first requires authorization to communicate to Slack: <a href="${contextPath}/plugins/servlet/slackAuthorization?requestToken=$baseUrl">Setup access</a>
+</div>
+
+<button class="aui-button" id="createSlack" style="display: none;">
+    <!-- find a way to get the image url of the slack image located in  /images -->
+    <img src="${contextPath}/download/resources/com.ullink.jira.slackit:slackit-resources/images/slack-22.png" class="hopInIcon">
+    Slack this issue
+</button>
+
+<div id="channelSlack" style="display: none;">
+<ul class="item-details">
+    <li>
+        <dl>
+            <dt>
+                <img src="${contextPath}/download/resources/com.ullink.jira.slackit:slackit-resources/images/slack-22.png" class="hopInIcon">
+                Channel:
+            </dt>
+            <dd><span><a id="channelSlack-header-channame" href="#" target="_blank"></a></span><span id="channelSlack-header-chanstatus"></span></dd>
+        </dl>
+        <dl>
+            <dt>Members:</dt>
+            <dd><span id="channelSlack-header-chanmembers"></span></dd>
+        </dl>
+    </li>
+</ul>
+
+<div id="channelSlack-history"></div>
+<div class="slackMorePanel"><a id="channelSlack-history-seemore" href="#" target="_blank">See more...</a></span></div>
+</div>
+
+<div style="display: none;">
+    <a id="slackAuthorizationSlackLogout" style="display: none;" href="${contextPath}/plugins/servlet/slackAuthorization?action=deleteToken">Disconnect you from Slack-It</a>
+</div>
+
+<!-- for dialog notifications -->
+<div id="aui-message-bar"></div>
+
+<!-- dialog -->
+<section role="dialog" id="slack-setupchannel-dialog" class="aui-layer aui-dialog2 aui-dialog2-medium" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h2 class="aui-dialog2-header-main">Setup slack channel</h2>
+        <a class="aui-dialog2-header-close"><span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span></a>
+    </header>
+    <div class="aui-dialog2-content">
+        <!-- Status UI (post submit status) -->
+        <div id="aui-dialog2-content-status-panel" style="display: none;">
+            <div id="status-channel-creating" style="display: none;">
+                <div id="status-channel-creating-spinner" class="button-spinner"></div> Creating channel...
+            </div>
+            <div id="status-channel-created" style="display: none;">
+                <span class="aui-icon aui-icon-small aui-iconfont-success"></span> Channel created...<br/>
+            </div>
+            <div id="status-channel-exists-fetchdata" style="display: none;">
+                <span class="aui-icon aui-icon-small aui-iconfont-devtools-task-in-progress" style="display: none;"></span>Channel already exists, resolving channel data...<br/>
+            </div>
+            <div id="status-channel-invite" style="display: none;">
+                <div id="status-channel-invite-spinner" class="button-spinner"> Inviting participants...</div>
+            </div>
+            <div id="status-channel-gueststatus" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Control UI -->
+        <div id="aui-dialog2-content-status-user-panel">
+            <form class="aui">
+                <div id="loadingDiv">
+                    <p>Loading Slack channels data...</p>
+                    <div id="loadingSpinner" class="button-spinner"></div>
+                </div>
+                <!-- Create channel-->
+                <div id="slack-channel-create-holder" style="display: none;">
+                    <h3>Channel</h3>
+                    <div class="field-group">
+                        <label for="slackChannelCreateInput">Name</label>
+                        <input class="text medium-field" type="text" id="slackChannelCreateInput"><div class="description">This channel does not exist and will be created <span class="aui-icon aui-icon-small aui-iconfont-list-add">OK</span></div>
+                        <div id="slackChannelCreateInputError" class="error" style="display: none;">Invalid channel name!</div>
+                    </div>
+                </div>
+                <!-- Use existing channel-->
+                <div id="slack-channel-useexisting-holder" style="display: none;">
+                    <h3>Channel</h3>
+                    <div class="field-group">
+                        <label for="slackChannelFoundInput">Name</label>
+                        <input class="text medium-field" type="text" id="slackChannelFoundInput" disabled><div class="description">This channel already exists <span class="aui-icon aui-icon-small aui-iconfont-approve">OK</span></div>
+                    </div>
+                </div>
+                <!-- Invite users -->
+                <div id="slack-invite-users" style="display: none;">
+                    <h3>Add participants</h3>
+                    <div class="field-group">
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb1" id="slack-invite-toggle-watchers">
+                            <label for="slack-invite-toggle-watchers">Add watchers</label>
+                        </div>
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb2" id="slack-invite-toggle-reporter">
+                            <label for="slack-invite-toggle-reporter">Add reporter</label>
+                        </div>
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb3" id="slack-invite-toggle-projectlead">
+                            <label for="slack-invite-toggle-projectlead">Add project lead</label>
+                        </div>
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb4" id="slack-invite-toggle-componentslead">
+                            <label for="slack-invite-toggle-componentslead">Add component(s) lead(s)</label>
+                        </div>
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb5" id="slack-invite-toggle-customFields">
+                            <label for="slack-invite-toggle-customFields">Add customFields contact(s)</label>
+                        </div>
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="cb6" id="slack-invite-toggle-linkedissuescontacts">
+                            <label for="slack-invite-toggle-linkedissuescontacts">Add linked issues contacts</label>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label for="slack-invite-guestsli   st">Participants list:</label>
+                        <div id="slack-invite-guestslist"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Dialog footer -->
+    <footer class="aui-dialog2-footer">
+        <!-- Actions to render on the right of the footer -->
+        <div class="aui-dialog2-footer-actions">
+            <button id="slack-setupchannel-dialog-submit" class="aui-button aui-button-primary">Slack It!</button>
+            <!--<button id="dialog-next-button" class="aui-button">Next</button>
+            <button id="dialog-close-button" class="aui-button aui-button-link">Close</button>-->
+        </div>
+        <!-- Hint text is rendered on the left of the footer -->
+        <div class="aui-dialog2-footer-hint">Create a slack channel for this issue. Invite participants.</div>
+    </footer>
+</section>
+
+<script>
+    var slackItContext = {
+        slackApiBaseUrl: '$slackApiBaseUrl',
+        slackBaseUrl: '$slackBaseUrl',
+        token: '$token',
+        slackChannelId: '$slackChannelId',
+        jiraIssueKey: '$issue.key',
+        jira_membersStr: '$jiraMembers',
+        jira_members: [],
+        servletLinkSlackChannelURL: '${contextPath}/plugins/servlet/slackAuthorization?action=setChannelId',
+    };
+
+    var slackIt = new SlackItClient(slackItContext);
+    slackIt.run();
+</script>
