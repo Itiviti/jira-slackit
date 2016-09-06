@@ -1,8 +1,5 @@
 package com.ullink.jira.slackit;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,106 +7,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.core.util.ClassLoaderUtils;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.event.type.EventDispatchOption;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.UpdateIssueRequest;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.link.IssueLink;
-import com.atlassian.jira.issue.link.IssueLinkManager;
 
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
-    private static final String jiraHomePath = ComponentAccessor.getComponentOfType(JiraHome.class).getHomePath();
     private static final ArrayList<String> obfuscateKeys = new ArrayList<String>(Arrays.asList("key", "credential" , "secret", "token"));
 
-    /**
-     * Load a file from our standard location in JIRA_HOME (/ullink/<subpath>/<fileName>) If not found, will load from standard ClassLoader (within Tomcat
-     * webapp folder
-     * 
-     * @param subPath
-     * @param fileName
-     * @param callingClass
-     * @return
-     */
-    public static InputStream loadUllinkPropertyFile(String subPath, String fileName, Class<?> callingClass) {
-        InputStream stream;
-
-        // first try with JIRA HOME location
-        StringBuffer confPath = new StringBuffer();
-        confPath.append(jiraHomePath).append(System.getProperty("file.separator")).append("ullink").append(System.getProperty("file.separator"));
-        if (StringUtils.isNotEmpty(subPath)) {
-            confPath.append(subPath).append(System.getProperty("file.separator"));
-        }
-        confPath.append(fileName);
-        try {
-            stream = new FileInputStream(confPath.toString());
-            return stream;
-        } catch (FileNotFoundException e) {
-            log.info("Unable to load from JIRA_HOME, looking into default location (webapp folder)");
-        }
-
-        // Second try with WebApp location
-        stream = ClassLoaderUtils.getResourceAsStream(fileName, callingClass);
-        if (stream != null) {
-            return stream;
-        }
-
-        // All failed
-        log.warn("Impossible to load the configuration file in Ullink folder '" + subPath + "' / '" + fileName + "'");
-        return null;
-    }
-    
-    /**
-     * Return an ArrayList of issues linked to the current issues Only links setup correctly are considered in this list
-     * 
-     * @param issue issue on which the analysis should be done
-     * @param validInwardLinksIds set of valid inward links
-     * @param validOutwardLinksIds set of valid outward links
-     * @param validIssueTypesIds set of valid issue types
-     * @return linked issues.
-     */
-    public static ArrayList<Issue> getIssuesLinked(Issue issue, Set<String> validInwardLinksIds, Set<String> validOutwardLinksIds, Set<String> validIssueTypesIds) {
-        ArrayList<Issue> linkedIssues = new ArrayList<>();
-        IssueLinkManager issueLinkManager = ComponentAccessor.getIssueLinkManager();
-        IssueManager issueManager = ComponentAccessor.getIssueManager();
-        List<IssueLink> inwLinks = issueLinkManager.getInwardLinks(issue.getId());
-        List<IssueLink> outwLinks = issueLinkManager.getOutwardLinks(issue.getId());
-        // Process all inward links
-        if (inwLinks != null) {
-            for (IssueLink issueLink : inwLinks) {
-                // This inward link is valid, now check if linked issue type is valid too
-                if (validInwardLinksIds.contains(issueLink.getLinkTypeId().toString())
-                        && (validIssueTypesIds.isEmpty() || validIssueTypesIds.contains(issueLink.getDestinationObject().getIssueTypeObject().getId()))) {
-                    // Issue type is valid, add the issue to the list of valid linked issues
-                    linkedIssues.add(issueManager.getIssueObject(issueLink.getSourceId()));
-                }
-            }
-        }
-        // Process all outward links
-        if (outwLinks != null) {
-            for (IssueLink issueLink : outwLinks) {
-                if (validOutwardLinksIds.contains(issueLink.getLinkTypeId().toString())
-                        && (validIssueTypesIds.isEmpty() || validIssueTypesIds.contains(issueLink.getDestinationObject().getIssueTypeObject().getId()))) {
-                    // Issue type is valid, add the issue to the list of valid linked issues
-                    linkedIssues.add(issueManager.getIssueObject(issueLink.getDestinationId()));
-                }
-            }
-        }
-        return linkedIssues;
-    }
     
     /**
      * Parse the given config map to return the list of valid links indicated in the configuration
