@@ -18,7 +18,7 @@ public interface SlackItConfigurationHolder {
     // ////////////////////////////////////////////////////////
     // SLACK IT properties
     // ////////////////////////////////////////////////////////
-    String SLACK_IT_CONFIGFILE = "jira-ullink-slackit.properties";
+    String SLACK_IT_CONFIGFILE = "jira-slackit.properties";
     
     // Slack api url
 
@@ -68,4 +68,8 @@ public interface SlackItConfigurationHolder {
     public Long getCommentRoleID();
 
     public String getCommentGroupID();
+
+    String getProxyAsString();
+
+    String getCommentVisibility();
 }

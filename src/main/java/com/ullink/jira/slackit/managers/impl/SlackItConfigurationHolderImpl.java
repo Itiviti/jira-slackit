@@ -208,8 +208,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
 
         // first try with JIRA HOME location
         StringBuffer confPath = new StringBuffer();
-        confPath.append(jiraHome.getHomePath()).append(System.getProperty("file.separator")).append("ullink").append(System.getProperty("file.separator"))
-                .append(SLACK_IT_CONFIGFILE);
+        confPath.append(jiraHome.getHomePath()).append(System.getProperty("file.separator")).append(SLACK_IT_CONFIGFILE);
         log.info("Configuration file location is '" + confPath.toString() + "'");
         try {
             stream = new FileInputStream(confPath.toString());
@@ -368,6 +367,11 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     @Override
+    public String getProxyAsString() {
+        return (proxy == null ? "DIRECT" : proxy.toString());
+    }
+
+    @Override
     public boolean hasProxy() {
         return (proxy != null);
     }
@@ -387,6 +391,12 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         log.info("Starting SlackIt plugin configurator");
         loadConfiguration();
         log.info("SlackIt plugin configurator started");
+    }
+    
+    @Override
+    public String getCommentVisibility() {
+        return (commentRestrictionRoleId != null ? "Role = " + commentRestrictionRoleId : "No role restriction") 
+                + "  "+ (commentRestrictionGroupId != null ? "Group = " + commentRestrictionGroupId : "No group restriction");
     }
 
     @Override
