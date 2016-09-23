@@ -41,7 +41,7 @@ public class SlackAuthorizationServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final PrintWriter w = resp.getWriter();
-        final ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
+        final ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
 
         String tokenParam = req.getParameter("token");
         String requestTokenParam = req.getParameter("requestToken");

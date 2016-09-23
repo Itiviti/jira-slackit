@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.collect.Lists;
 
@@ -34,10 +33,6 @@ public class JiraMember implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public static JiraMember getJiraMember(User user) {
-        return (user == null ? null : new JiraMember(user.getDisplayName(), user.getEmailAddress()));
     }
 
     public static JiraMember getJiraMember(ApplicationUser user) {

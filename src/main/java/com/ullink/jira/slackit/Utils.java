@@ -72,7 +72,7 @@ public class Utils {
 
     public static void updateCustomField(MutableIssue issue, CustomField cf, String fieldValue) {
         issue.setCustomFieldValue(cf, fieldValue);
-        ComponentAccessor.getIssueManager().updateIssue(ComponentAccessor.getJiraAuthenticationContext().getUser(), issue,
+        ComponentAccessor.getIssueManager().updateIssue(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser(), issue,
                 UpdateIssueRequest.builder().eventDispatchOption(EventDispatchOption.ISSUE_UPDATED).sendMail(false).build());
     }
     

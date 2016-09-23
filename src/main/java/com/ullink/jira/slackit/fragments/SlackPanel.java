@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
@@ -35,12 +34,11 @@ public class SlackPanel extends AbstractJiraContextProvider {
     }
 
     @Override
-    public Map getContextMap(User arg0, JiraHelper jiraHelper) {
+    public Map<String, Object> getContextMap(ApplicationUser user, JiraHelper jiraHelper) {
         Issue issue = (Issue) jiraHelper.getContextParams().get("issue");
-        final String currentUserKey = ComponentAccessor.getJiraAuthenticationContext().getUser().getKey();
         final Map<String, Object> params = Maps.newHashMap();
         params.put("issue", issue);
-        String token = userTokenService.getUserToken(currentUserKey);
+        String token = userTokenService.getUserToken(user.getKey());
         params.put("token", token);
         params.put("baseUrl", jiraHelper.getRequest().getRequestURI());
         params.put("contextPath", jiraHelper.getRequest().getContextPath());
@@ -68,7 +66,7 @@ public class SlackPanel extends AbstractJiraContextProvider {
     }
 
     private void addStandardIssuecontacts(JiraMembers jiraMembers, Issue issue) {
-        jiraMembers.setCurrentUser(JiraMember.getJiraMember(ComponentAccessor.getJiraAuthenticationContext().getUser()));
+        jiraMembers.setCurrentUser(JiraMember.getJiraMember(ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()));
 
         if (issue.getReporter() != null) {
             jiraMembers.setReporter(JiraMember.getJiraMember(issue.getReporter()));
@@ -84,8 +82,8 @@ public class SlackPanel extends AbstractJiraContextProvider {
             }
         }
 
-        if (issue.getComponentObjects() != null) {
-            for (ProjectComponent component : issue.getComponentObjects()) {
+        if (issue.getComponents() != null) {
+            for (ProjectComponent component : issue.getComponents()) {
                 if (component.getComponentLead() != null) {
                     jiraMembers.addComponentLead(JiraMember.getJiraMember(component.getComponentLead()));
                 }

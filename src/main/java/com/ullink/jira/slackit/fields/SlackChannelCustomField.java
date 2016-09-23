@@ -11,7 +11,9 @@ import com.atlassian.jira.issue.customfields.impl.GenericTextCFType;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
 import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.TextFieldCharacterLengthValidator;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.google.common.base.Splitter;
 import com.ullink.jira.slackit.managers.SlackItConfigurationHolder;
 
@@ -20,8 +22,8 @@ public class SlackChannelCustomField extends GenericTextCFType implements Sortab
     public static String SEPARATOR = ".";
     private SlackItConfigurationHolder slackItConfigurationHolder;
 
-    public SlackChannelCustomField(CustomFieldValuePersister customFieldValuePersister, GenericConfigManager genericConfigManager, SlackItConfigurationHolder slackItConfigurationHolder) {
-        super(customFieldValuePersister, genericConfigManager);
+    public SlackChannelCustomField(CustomFieldValuePersister customFieldValuePersister, GenericConfigManager genericConfigManager, TextFieldCharacterLengthValidator textFieldCharacterLengthValidator, final JiraAuthenticationContext jiraAuthenticationContext, SlackItConfigurationHolder slackItConfigurationHolder) {
+        super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator, jiraAuthenticationContext);
         this.slackItConfigurationHolder = slackItConfigurationHolder;
     }
 

@@ -20,7 +20,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.core.util.ClassLoaderUtils;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.util.JiraHome;
@@ -36,7 +35,6 @@ import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.ullink.jira.slackit.Utils;
 import com.ullink.jira.slackit.fields.SlackChannelCustomField;
@@ -82,7 +80,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         log.info("Start loading configuration");
         ErrorCollection loadingErrorCollection = new ErrorCollection();
         slackItProperties = loadPropertiesFile(loadingErrorCollection);
-        if (slackItProperties != null) {
+        if (slackItProperties != null && ! slackItProperties.isEmpty()) {
             loadSlackCustomField(loadingErrorCollection);
             loadChannelMembersCustomfields(loadingErrorCollection);
             loadChannelMembersIssueLinks(loadingErrorCollection);
@@ -111,12 +109,12 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         if (rawCommentRestriction.startsWith("role.")){
             ProjectRole visibilityRole = projectRoleManager.getProjectRole(rawCommentRestriction.replace("role.", "").trim());
             commentRestrictionRoleId = visibilityRole == null ?  null : visibilityRole.getId(); 
-            log.warn("Setting comment restriction with role " + commentRestrictionRoleId );
+            log.info("Setting comment restriction with role " + commentRestrictionRoleId );
         }
         if (rawCommentRestriction.startsWith("group.")){
             Group visibilityGroup = ComponentAccessor.getGroupManager().getGroup(rawCommentRestriction.replace("group.", "").trim());
             commentRestrictionGroupId = visibilityGroup == null ? null : visibilityGroup.getName();
-            log.warn("Setting comment restriction with group " + commentRestrictionGroupId );
+            log.info("Setting comment restriction with group " + commentRestrictionGroupId );
         }
         
     }
@@ -206,28 +204,20 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         InputStream stream = null;
         Properties propsFromFile = new Properties();
 
-        // first try with JIRA HOME location
         StringBuffer confPath = new StringBuffer();
         confPath.append(jiraHome.getHomePath()).append(System.getProperty("file.separator")).append(SLACK_IT_CONFIGFILE);
-        log.info("Configuration file location is '" + confPath.toString() + "'");
+        log.info("Configuration file location is expected at '" + confPath.toString() + "'");
         try {
             stream = new FileInputStream(confPath.toString());
         } catch (FileNotFoundException e) {
             loadingErrorCollection.addErrorMessage("Unable to load configuration file from JIRA_HOME, this should be the standard file location, please fix this (trying with standard ClasLoader as fallback)");
+            return null;
         }
-        // Second try with WebApp location
-        if (stream == null) {
-            stream = ClassLoaderUtils.getResourceAsStream(SLACK_IT_CONFIGFILE, this.getClass());
-        }
-        if (stream == null) {
-            // All failed
-            loadingErrorCollection.addErrorMessage("Impossible to load the configuration file '" + SLACK_IT_CONFIGFILE + "'");
-        } else { 
-            try {
-                propsFromFile.load(stream);
-            } catch (IOException e) {
-                loadingErrorCollection.addErrorMessage("Exception when loading configuration file '" + SLACK_IT_CONFIGFILE + "' : " + e.getMessage());
-            }
+        try {
+            propsFromFile.load(stream);
+        } catch (IOException e) {
+            loadingErrorCollection.addErrorMessage("Exception when loading configuration file '" + SLACK_IT_CONFIGFILE + "' : " + e.getMessage());
+            return null;
         }
 
         if (stream != null) {
@@ -237,6 +227,10 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
                 log.warn("Exception when closing file stream :" + e.getMessage(), e);
             }
         }
+        if (propsFromFile.isEmpty()) {
+            log.warn("Empty porperties file loaded");
+            return null;
+        }
         log.debug("Successfull loading of " + propsFromFile.size() + " properties => " + propsFromFile.keySet());
         return propsFromFile;
     }
@@ -244,6 +238,10 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     private String getProperty(final String key, final String alt_value) {
         if (slackItProperties == null) {
             loadConfiguration();
+            if (slackItProperties == null) {
+                log.error("Impossible to proceed with request for property '" + key + "', property file is not loaded");
+                return "";
+            }
         }
         if (key == null) {
             log.warn("Trying to retrieve a property using a null key, spooky....");
@@ -352,8 +350,8 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         Set<ApplicationUser> members = new HashSet<ApplicationUser>();
         List<Issue> linkedIssues = getValidLinkedIssuesForChannelMembers(issue);
         for (Issue linkedIssue : linkedIssues) {
-            members.add(ApplicationUsers.from(linkedIssue.getReporter()));
-            members.add(ApplicationUsers.from(linkedIssue.getAssignee()));
+            members.add(linkedIssue.getReporter());
+            members.add(linkedIssue.getAssignee());
             members.addAll(getCustomFieldUsersForChannelMembers(linkedIssue));
         }
         //Remove null users (like unassigned)
@@ -383,7 +381,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     
     @Override
     public Properties getProperties(){
-        return Utils.sanitizeProperties(slackItProperties);
+        return ((slackItProperties != null) ? Utils.sanitizeProperties(slackItProperties) : new Properties());
     }
 
     @Override
@@ -407,6 +405,11 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     @Override
     public String getCommentGroupID() {
         return commentRestrictionGroupId;
+    }
+
+    @Override
+    public void onStop() {
+        log.info("Lifycle plugin STOP - Nothing to do");
     }
 
 }
