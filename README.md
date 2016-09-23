@@ -17,7 +17,7 @@ Invite dialog example:
 
 How to compile
 ============
-This plugin was initially built (and tested) for JIRA 6.3.12. It is now working with JIRA 7.
+This plugin was initially built (and tested) for JIRA 6.3.12. It does not support JIRA 7 (see other branch)
 
 In order to compile the code and a deployable plugin, you need to have Atlassian Plugin development kit installed and working on your machine (see https://developer.atlassian.com/docs/getting-started). The initial release was built using version 6.1.0
 
