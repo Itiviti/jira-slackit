@@ -21,18 +21,18 @@ import com.atlassian.jira.issue.fields.CustomField;
 
 public class Utils {
 
-    private static final Logger log = LoggerFactory.getLogger(Utils.class);
-    private static final ArrayList<String> obfuscateKeys = new ArrayList<String>(Arrays.asList("key", "credential" , "secret", "token"));
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+    private static final ArrayList<String> obfuscateKeys = new ArrayList<>(Arrays.asList("key", "credential", "secret", "token"));
 
     
     /**
      * Parse the given config map to return the list of valid links indicated in the configuration
      * 
-     * @param rawConfig Map of configuration
+     * @param issuelinksConfigString String of configuration
      * @return a Set of string, each representing a valid issue link
      */
     public static HashMap<String, HashSet<String>> parseLinks(String issuelinksConfigString) {
-        log.debug("Parsing issue links configuration from properties file: '" + issuelinksConfigString + "'");
+        LOG.debug("Parsing issue links configuration from properties file: '" + issuelinksConfigString + "'");
         HashSet<String> inwardLinks = new HashSet<>();
         HashSet<String> outwardLinks = new HashSet<>();
         
@@ -41,7 +41,7 @@ public class Utils {
             String dir = null;
             String id = null;
             if(StringUtils.isEmpty(link)) {
-                log.warn("Bad issue link configuration: empty token");
+                LOG.warn("Bad issue link configuration: empty token");
                 continue;
             }
             StringTokenizer linkSt = new StringTokenizer(link, ".");
@@ -51,7 +51,7 @@ public class Utils {
                 if (id == null || dir == null)
                     throw new NoSuchElementException("Empty linkID or direction");
             } catch (NoSuchElementException e) {
-                log.warn("Incorrect configuration token, expecting <linkID>.<direction>: " + linkSt + " ("+e.getMessage() + ")");
+                LOG.warn("Incorrect configuration token, expecting <linkID>.<direction>: " + linkSt + " ("+e.getMessage() + ")");
                 continue;
             }
             if ("in".equalsIgnoreCase(dir)) {
@@ -59,12 +59,12 @@ public class Utils {
             } else if ("out".equalsIgnoreCase(dir)) {
                 outwardLinks.add(id);
             } else {
-                log.warn("This link direction : " + dir + "is not valid");
+                LOG.warn("This link direction : " + dir + "is not valid");
             }
         }
         HashMap<String, HashSet<String>> links = new HashMap<>();
-        log.debug("Valid inward links id list loaded: " + StringUtils.join(inwardLinks.toArray(), ","));
-        log.debug("Valid outward links id list loaded: " + StringUtils.join(outwardLinks.toArray(), ","));
+        LOG.debug("Valid inward links id list loaded: " + StringUtils.join(inwardLinks.toArray(), ","));
+        LOG.debug("Valid outward links id list loaded: " + StringUtils.join(outwardLinks.toArray(), ","));
         links.put("in", inwardLinks);
         links.put("out", outwardLinks);
         return links;
