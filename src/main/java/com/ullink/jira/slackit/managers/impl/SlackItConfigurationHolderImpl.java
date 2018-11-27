@@ -322,10 +322,10 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     /**
-     * Retrieve the list of JIRA users matching the list of customfields defined in properties To be used as candidate for channel members at creation
+     * Retrieve the list of Jira users matching the list of customfields defined in properties To be used as candidate for channel members at creation
      * 
      * @param issue the issue to analyze
-     * @return a list of JIRA users
+     * @return a list of Jira users
      */
     @SuppressWarnings("unchecked")
     public Set<ApplicationUser> getCustomFieldUsersForChannelMembers(Issue issue) {
@@ -341,7 +341,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     /**
-     * Retrieve the list of JIRA users related to the linked issues defined in properties To be used as candidate for channel members at creation
+     * Retrieve the list of Jira users related to the linked issues defined in properties To be used as candidate for channel members at creation
      * 
      * @param issue
      * @return

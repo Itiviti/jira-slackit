@@ -6,9 +6,9 @@
 
     <groupId>com.ullink.jira</groupId>
     <artifactId>jira-slackit</artifactId>
-    <version>0.0.1</version>
+    <version>7.0.0</version>
     <name>Slack It</name>
-    <description>The Slack extension for JIRA</description>
+    <description>The Slack extension for Jira</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.3</version>
+            <version>2.10.1</version>
         </dependency>
 
         <dependency>
@@ -84,10 +84,10 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.6.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -106,7 +106,7 @@
         <ao.version>1.4.0</ao.version>
     </properties>
     <organization>
-        <name>ULLINK SAS</name>
-        <url>https://www.ullink.com</url>
+        <name>Itiviti Group AB</name>
+        <url>https://www.itiviti.com/</url>
     </organization>
 </project>
