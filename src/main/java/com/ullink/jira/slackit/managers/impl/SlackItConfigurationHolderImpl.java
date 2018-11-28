@@ -201,7 +201,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
 
     private Properties loadPropertiesFile(ErrorCollection loadingErrorCollection) {
         LOG.info("Loading configuration file '" + SLACK_IT_CONFIGFILE + "'");
-        InputStream stream = null;
+        InputStream stream;
         Properties propsFromFile = new Properties();
 
         StringBuilder confPath = new StringBuilder();
@@ -343,7 +343,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     /**
      * Retrieve the list of Jira users related to the linked issues defined in properties To be used as candidate for channel members at creation
      * 
-     * @param issue
+     * @param issue Issue object
      * @return
      */
     public Set<ApplicationUser> getLinkedIssuesUsersForChannelMembers(Issue issue) {

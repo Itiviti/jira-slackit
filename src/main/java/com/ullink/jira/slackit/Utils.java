@@ -38,8 +38,8 @@ public class Utils {
         
         List<String> listOfLinks = Arrays.asList(issuelinksConfigString.split("\\s*,\\s*"));
         for (String link : listOfLinks) {
-            String dir = null;
-            String id = null;
+            String dir;
+            String id;
             if(StringUtils.isEmpty(link)) {
                 LOG.warn("Bad issue link configuration: empty token");
                 continue;
