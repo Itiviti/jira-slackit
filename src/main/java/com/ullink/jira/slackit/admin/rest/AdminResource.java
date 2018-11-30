@@ -19,7 +19,7 @@ import com.ullink.jira.slackit.managers.SlackItConfigurationHolder;
 @Path("/admin")
 public class AdminResource {
 
-    private static final Logger log = Logger.getLogger(AdminResource.class);
+    private static final Logger LOG = Logger.getLogger(AdminResource.class);
     private final UserManager userManager;
     private SlackItConfigurationHolder slackItConfigurationHolder;
 
@@ -32,7 +32,7 @@ public class AdminResource {
     @Path("/reloadProperties")
     @Produces({MediaType.APPLICATION_JSON})
     public Response reloadProperties(@Context HttpServletRequest request) {
-        log.info("Reloading slakit configuration");
+        LOG.info("Reloading slakit configuration");
         UserProfile user = userManager.getRemoteUser(request);
         if (user == null || !userManager.isSystemAdmin(user.getUserKey())) {
             return Response.status(Status.UNAUTHORIZED).build();

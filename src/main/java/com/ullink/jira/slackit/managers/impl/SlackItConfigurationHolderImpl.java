@@ -42,7 +42,7 @@ import com.ullink.jira.slackit.managers.SlackItConfigurationHolder;
 
 public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolder, LifecycleAware {
 
-    private static final Logger log = Logger.getLogger(SlackItConfigurationHolderImpl.class);
+    private static final Logger LOG = Logger.getLogger(SlackItConfigurationHolderImpl.class);
 
     private Proxy proxy;
 
@@ -72,12 +72,12 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     public ErrorCollection forceReload() {
-        log.info("Reload forced for slackit configurator");
+        LOG.info("Reload forced for slackit configurator");
         return loadConfiguration();
     }
 
     private ErrorCollection loadConfiguration() {
-        log.info("Start loading configuration");
+        LOG.info("Start loading configuration");
         ErrorCollection loadingErrorCollection = new ErrorCollection();
         slackItProperties = loadPropertiesFile(loadingErrorCollection);
         if (slackItProperties != null && ! slackItProperties.isEmpty()) {
@@ -89,12 +89,12 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
             loadProxyConfiguration(loadingErrorCollection);
         }
         if (loadingErrorCollection.hasAnyErrors()) {
-            log.warn("There were errors when loading configuration: ");
+            LOG.warn("There were errors when loading configuration: ");
             for(String errorMessage : loadingErrorCollection.getErrorMessages()) {
-                log.warn("   --> " + errorMessage);
+                LOG.warn("   --> " + errorMessage);
             }
         } else {
-            log.info("Configuration loaded successfully");
+            LOG.info("Configuration loaded successfully");
         }
         return loadingErrorCollection;
     }
@@ -109,12 +109,12 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         if (rawCommentRestriction.startsWith("role.")){
             ProjectRole visibilityRole = projectRoleManager.getProjectRole(rawCommentRestriction.replace("role.", "").trim());
             commentRestrictionRoleId = visibilityRole == null ?  null : visibilityRole.getId(); 
-            log.info("Setting comment restriction with role " + commentRestrictionRoleId );
+            LOG.info("Setting comment restriction with role " + commentRestrictionRoleId );
         }
         if (rawCommentRestriction.startsWith("group.")){
             Group visibilityGroup = ComponentAccessor.getGroupManager().getGroup(rawCommentRestriction.replace("group.", "").trim());
             commentRestrictionGroupId = visibilityGroup == null ? null : visibilityGroup.getName();
-            log.info("Setting comment restriction with group " + commentRestrictionGroupId );
+            LOG.info("Setting comment restriction with group " + commentRestrictionGroupId );
         }
         
     }
@@ -130,11 +130,11 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         }
         Proxy proxySetup = proxies.get(0);
         if (proxySetup.type() == Proxy.Type.DIRECT) {
-            log.info("No proxy configured, using direct access");
+            LOG.info("No proxy configured, using direct access");
             proxy = null;
         } else {
             proxy = proxySetup;
-            log.info("Using TOMCAT proxy configuration for Slack:" + proxy.toString());
+            LOG.info("Using TOMCAT proxy configuration for Slack:" + proxy.toString());
         }
     }
 
@@ -150,16 +150,16 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     private void loadChannelMembersIssueLinks(ErrorCollection loadingErrorCollection) {
-        log.info("Loading issue links to use for channel members candidates");
+        LOG.info("Loading issue links to use for channel members candidates");
         channelMembersIssueLinks = Utils.parseLinks(getProperty(SLACK_IT_MEMBERS_ISSUELINKS));
-        log.info("Loading done");
+        LOG.info("Loading done");
         return;
     }
 
     private void loadChannelMembersCustomfields(ErrorCollection loadingErrorCollection) {
-        log.info("Loading user custom fields holding channel members candidates");
+        LOG.info("Loading user custom fields holding channel members candidates");
         String listOfIDs = getProperty(SLACK_IT_MEMBERS_CUSTOMFIELDS);
-        channelMembersCustomfields = new ArrayList<CustomField>();
+        channelMembersCustomfields = new ArrayList<>();
         if (StringUtils.isEmpty(listOfIDs)) {
             loadingErrorCollection.addErrorMessage("No specific customfields setup for addition slack channel membership");
             return;
@@ -172,18 +172,18 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
                 loadingErrorCollection.addErrorMessage("Unknown custom field setup in " + SLACK_IT_MEMBERS_CUSTOMFIELDS + " : '" + id);
                 return;
             } else if (tmp.getCustomFieldType() instanceof UserCFType || tmp.getCustomFieldType() instanceof MultiUserCFType) {
-                log.info("Adding customfield '" + tmp.getFieldName() + "' as possible channel member");
+                LOG.info("Adding customfield '" + tmp.getFieldName() + "' as possible channel member");
                 channelMembersCustomfields.add(tmp);
             } else {
                 loadingErrorCollection.addErrorMessage("Custom field '" + tmp.getFieldName() + "'/'" + tmp.getId() + "' is not a valid user or multiuser field, skipping");
                 return;
             }
         }
-        log.info("List of custom fields for channel members initialized with " + channelMembersCustomfields.size() + " customfields");
+        LOG.info("List of custom fields for channel members initialized with " + channelMembersCustomfields.size() + " customfields");
     }
 
     private void loadSlackCustomField(ErrorCollection loadingErrorCollection) {
-        log.debug("Setting SlackIt custom field defined by the property '" + SLACK_IT_CHANNEL_FIELD_ID + "'");
+        LOG.debug("Setting SlackIt custom field defined by the property '" + SLACK_IT_CHANNEL_FIELD_ID + "'");
         if (!slackItProperties.containsKey(SLACK_IT_CHANNEL_FIELD_ID)) {
             loadingErrorCollection.addErrorMessage("Cannot load custom field, key '" + SLACK_IT_CHANNEL_FIELD_ID + "' is not found in properties => " + slackItProperties.keySet());
             return;
@@ -195,18 +195,18 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
             return;
         } else {
             slackItChannelIdCF = cf;
-            log.info("SlackIt customfield loaded as " + slackItChannelIdCF.getName() + " / " + slackItChannelIdCF.getId());
+            LOG.info("SlackIt customfield loaded as " + slackItChannelIdCF.getName() + " / " + slackItChannelIdCF.getId());
         }
     }
 
     private Properties loadPropertiesFile(ErrorCollection loadingErrorCollection) {
-        log.info("Loading configuration file '" + SLACK_IT_CONFIGFILE + "'");
-        InputStream stream = null;
+        LOG.info("Loading configuration file '" + SLACK_IT_CONFIGFILE + "'");
+        InputStream stream;
         Properties propsFromFile = new Properties();
 
-        StringBuffer confPath = new StringBuffer();
+        StringBuilder confPath = new StringBuilder();
         confPath.append(jiraHome.getHomePath()).append(System.getProperty("file.separator")).append(SLACK_IT_CONFIGFILE);
-        log.info("Configuration file location is expected at '" + confPath.toString() + "'");
+        LOG.info("Configuration file location is expected at '" + confPath.toString() + "'");
         try {
             stream = new FileInputStream(confPath.toString());
         } catch (FileNotFoundException e) {
@@ -224,14 +224,14 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
             try {
                 stream.close();
             } catch (IOException e) {
-                log.warn("Exception when closing file stream :" + e.getMessage(), e);
+                LOG.warn("Exception when closing file stream :" + e.getMessage(), e);
             }
         }
         if (propsFromFile.isEmpty()) {
-            log.warn("Empty porperties file loaded");
+            LOG.warn("Empty porperties file loaded");
             return null;
         }
-        log.debug("Successfull loading of " + propsFromFile.size() + " properties => " + propsFromFile.keySet());
+        LOG.debug("Successfull loading of " + propsFromFile.size() + " properties => " + propsFromFile.keySet());
         return propsFromFile;
     }
 
@@ -239,21 +239,21 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         if (slackItProperties == null) {
             loadConfiguration();
             if (slackItProperties == null) {
-                log.error("Impossible to proceed with request for property '" + key + "', property file is not loaded");
+                LOG.error("Impossible to proceed with request for property '" + key + "', property file is not loaded");
                 return "";
             }
         }
         if (key == null) {
-            log.warn("Trying to retrieve a property using a null key, spooky....");
+            LOG.warn("Trying to retrieve a property using a null key, spooky....");
             return null;
         }
         String result = slackItProperties.getProperty(key);
         if ((result == null) || (result.trim().length() == 0)) {
             if (alt_value != null) {
                 result = alt_value;
-                log.info("Configuration key missing '" + key + "' using alternative hard coded '" + alt_value + "'");
+                LOG.info("Configuration key missing '" + key + "' using alternative hard coded '" + alt_value + "'");
             } else {
-                log.info("Configuration key missing '" + key + "' but no alternative hard coded value, setting to null");
+                LOG.info("Configuration key missing '" + key + "' but no alternative hard coded value, setting to null");
                 return null;
             }
         }
@@ -322,14 +322,14 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     /**
-     * Retrieve the list of JIRA users matching the list of customfields defined in properties To be used as candidate for channel members at creation
+     * Retrieve the list of Jira users matching the list of customfields defined in properties To be used as candidate for channel members at creation
      * 
      * @param issue the issue to analyze
-     * @return a list of JIRA users
+     * @return a list of Jira users
      */
     @SuppressWarnings("unchecked")
     public Set<ApplicationUser> getCustomFieldUsersForChannelMembers(Issue issue) {
-        Set<ApplicationUser> members = new HashSet<ApplicationUser>();
+        Set<ApplicationUser> members = new HashSet<>();
         for (CustomField cf : channelMembersCustomfields) {
             if (cf.getCustomFieldType() instanceof UserCFType && (issue.getCustomFieldValue(cf) != null)) {
                 members.add((ApplicationUser) issue.getCustomFieldValue(cf));
@@ -341,13 +341,13 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
     }
 
     /**
-     * Retrieve the list of JIRA users related to the linked issues defined in properties To be used as candidate for channel members at creation
+     * Retrieve the list of Jira users related to the linked issues defined in properties To be used as candidate for channel members at creation
      * 
-     * @param issue
+     * @param issue Issue object
      * @return
      */
     public Set<ApplicationUser> getLinkedIssuesUsersForChannelMembers(Issue issue) {
-        Set<ApplicationUser> members = new HashSet<ApplicationUser>();
+        Set<ApplicationUser> members = new HashSet<>();
         List<Issue> linkedIssues = getValidLinkedIssuesForChannelMembers(issue);
         for (Issue linkedIssue : linkedIssues) {
             members.add(linkedIssue.getReporter());
@@ -386,9 +386,9 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
 
     @Override
     public void onStart() {
-        log.info("Starting SlackIt plugin configurator");
+        LOG.info("Starting SlackIt plugin configurator");
         loadConfiguration();
-        log.info("SlackIt plugin configurator started");
+        LOG.info("SlackIt plugin configurator started");
     }
     
     @Override
@@ -409,7 +409,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
 
     @Override
     public void onStop() {
-        log.info("Lifycle plugin STOP - Nothing to do");
+        LOG.info("Lifycle plugin STOP - Nothing to do");
     }
 
 }

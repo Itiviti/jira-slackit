@@ -8,7 +8,7 @@ import com.ullink.jira.slackit.managers.SlackItConfigurationHolder;
 public class SlakItAdminActions extends JiraWebActionSupport {
 
     private static final long serialVersionUID = -5950096754381886768L;
-    private static final Logger log = Logger.getLogger(SlackItConfigurationHolder.class);
+    private static final Logger LOG = Logger.getLogger(SlackItConfigurationHolder.class);
     private SlackItConfigurationHolder slackItConfigurationHolder;
     
     public SlakItAdminActions(SlackItConfigurationHolder slackItConfigurationHolder){
@@ -19,13 +19,14 @@ public class SlakItAdminActions extends JiraWebActionSupport {
         return slackItConfigurationHolder;
     }
 
+    @Override
     public String doDefault() throws Exception {
-        log.debug("doDefault");
+        LOG.debug("doDefault");
         return INPUT;
     }
 
     public String doConfigFileReload() throws Exception {
-        log.debug("Reloading configuration requested by user");
+        LOG.debug("Reloading configuration requested by user");
         slackItConfigurationHolder.forceReload();
         return returnMsgToUser("SlackitSetup!default.jspa", "Reload successful", MessageType.SUCCESS , false, null);
     }

@@ -1,9 +1,8 @@
 <atlassian-plugin key="com.ullink.jira.slackit" name="Slack It" plugins-version="2">
     <plugin-info>
-        <description>Link your JIRA issues and you Slack channels to create interactive and efficient discussions</description>
+        <description>Link your Jira issues and you Slack channels to create interactive and efficient discussions</description>
         <version>${project.version}</version>
-		<vendor name="ULLINK SAS" url="https://www.ullink.com" />        
-        <application-version min="6.0" max="6.0"/>
+		<vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
         <param name="plugin-banner">images/pluginBanner.png</param>
