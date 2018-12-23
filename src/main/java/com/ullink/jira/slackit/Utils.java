@@ -10,18 +10,18 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.type.EventDispatchOption;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.UpdateIssueRequest;
 import com.atlassian.jira.issue.fields.CustomField;
+import org.apache.log4j.Logger;
 
 public class Utils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
+    private static final Logger LOG = Logger.getLogger(Utils.class);
     private static final ArrayList<String> obfuscateKeys = new ArrayList<>(Arrays.asList("key", "credential", "secret", "token"));
 
     
@@ -103,7 +103,7 @@ public class Utils {
             return value;
         }
         //Second case, be strict on passwords
-        if ("password".equalsIgnoreCase("key")) {
+        if ("password".equalsIgnoreCase(key)) {
             return "XXXXXXXXXX";
         }
         //Last case, print last digits to at least give a hint

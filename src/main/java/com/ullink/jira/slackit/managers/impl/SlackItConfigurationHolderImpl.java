@@ -145,7 +145,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         }
         if (jiraUser == null) {
             loadingErrorCollection.addErrorMessage("JIRA user for slack is not defined or unknown for key " + SLACK_IT_JIRA_USER + " and value '" + userkey + "'");
-            return;
         }
     }
 
@@ -153,7 +152,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         LOG.info("Loading issue links to use for channel members candidates");
         channelMembersIssueLinks = Utils.parseLinks(getProperty(SLACK_IT_MEMBERS_ISSUELINKS));
         LOG.info("Loading done");
-        return;
     }
 
     private void loadChannelMembersCustomfields(ErrorCollection loadingErrorCollection) {
@@ -192,7 +190,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         CustomField cf = customFieldManager.getCustomFieldObject(rawID2);
         if (cf == null || !(cf.getCustomFieldType() instanceof SlackChannelCustomField)) {
             loadingErrorCollection.addErrorMessage("Cannot load the slack it custom field identified by '" + rawID2 + "'. Field is either unknown or not of the right type ");
-            return;
         } else {
             slackItChannelIdCF = cf;
             LOG.info("SlackIt customfield loaded as " + slackItChannelIdCF.getName() + " / " + slackItChannelIdCF.getId());

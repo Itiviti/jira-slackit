@@ -19,7 +19,7 @@ public class SlakItAdminActions extends JiraWebActionSupport {
         return slackItConfigurationHolder;
     }
 
-    @Override
+
     public String doDefault() throws Exception {
         LOG.debug("doDefault");
         return INPUT;
