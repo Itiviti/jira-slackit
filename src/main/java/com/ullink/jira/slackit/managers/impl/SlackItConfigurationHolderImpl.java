@@ -217,12 +217,10 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
             return null;
         }
 
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                LOG.warn("Exception when closing file stream :" + e.getMessage(), e);
-            }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            LOG.warn("Exception when closing file stream :" + e.getMessage(), e);
         }
         if (propsFromFile.isEmpty()) {
             LOG.warn("Empty porperties file loaded");
@@ -341,7 +339,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
      * Retrieve the list of Jira users related to the linked issues defined in properties To be used as candidate for channel members at creation
      * 
      * @param issue Issue object
-     * @return
+     * @return Set<ApplicationUser> ApplicationUser object
      */
     public Set<ApplicationUser> getLinkedIssuesUsersForChannelMembers(Issue issue) {
         Set<ApplicationUser> members = new HashSet<>();

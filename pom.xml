@@ -8,7 +8,8 @@
     <artifactId>jira-slackit</artifactId>
     <version>8.0.0</version>
     <name>Slack It</name>
-    <description>The Slack extension for Jira</description>
+    <description>The Slack extension for Jira. Link your Jira issues and you Slack channels to create
+        interactive and efficient discussions</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -74,6 +75,19 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>3.1</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

@@ -9,14 +9,12 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
-
-
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.type.EventDispatchOption;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.UpdateIssueRequest;
 import com.atlassian.jira.issue.fields.CustomField;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class Utils {
