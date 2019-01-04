@@ -3,7 +3,7 @@ package com.ullink.jira.slackit.fields;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.annotation.NotNull;
+import javax.annotation.Nonnull;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.customfields.SortableCustomField;
