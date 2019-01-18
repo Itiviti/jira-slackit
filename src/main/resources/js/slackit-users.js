@@ -139,7 +139,6 @@ var HttpRxClient = (function () {
             });
             subject.onCompleted();
         });
-
         return subject;
     };
 
@@ -199,6 +198,29 @@ var HttpRxClient = (function () {
 
         return subject;
     };
+
+    HttpRxClient.prototype.setTopicAsJiraLinkToChannelObservable = function (channelId, topic, token, slackApiBaseUrl) {
+        var subject = new Rx.AsyncSubject();
+        AJS.$.getJSON(slackApiBaseUrl + "/channels.setTopic?token=" + token + "&channel=" + channelId + "&topic=" + topic, function(json) {
+            if (json.error) {
+                subject.onNext({
+                    ok: false,
+                    error: json.error
+                });
+                subject.onCompleted();
+                return;
+            }
+
+            subject.onNext({
+                ok: true,
+                topic: json.topic
+            });
+            subject.onCompleted();
+        });
+
+        return subject;
+    };
+
 
     return HttpRxClient;
 }());
@@ -508,6 +530,18 @@ var SlackItClient = (function () {
 
     SlackItClient.prototype.onSlackItInvitePhaseInviteUser = function(self, user, channelId, channelName, nbGuests) {
         var _this = self;
+        var topic = AJS.params.baseURL + '/browse/' + _this.context.jiraIssueKey;
+        _this.rxClient.setTopicAsJiraLinkToChannelObservable(channelId, topic, _this.context.token, _this.context.slackApiBaseUrl).subscribe(
+            function(topicSetData) {
+                if (topicSetData.ok) {
+                    console.log('Topic has been set for "#' + channelName + '"');
+                    }
+            },
+            function(error) {
+                console.log('Error: ' + error);
+            },
+            function() {}
+        );
         _this.rxClient.inviteSlackUserToChannelObservable(channelId, user.slackId, _this.context.token, _this.context.slackApiBaseUrl).subscribe(
             function(inviteData) {
                 if (!inviteData.error || inviteData.error == 'already_in_channel' || inviteData.error == 'cant_invite_self') {

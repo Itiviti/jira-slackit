@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ullink.jira</groupId>
     <artifactId>jira-slackit</artifactId>
     <version>8.0.0</version>
     <name>Slack It</name>
-    <description>The Slack extension for Jira</description>
+    <description>The Slack extension for Jira. Link your Jira issues and you Slack channels to create
+        interactive and efficient discussions</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -37,7 +38,7 @@
             <artifactId>jira-core</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
 
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -45,33 +46,61 @@
             <version>1.8-atlassian-15</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.templaterenderer</groupId>
             <artifactId>atlassian-template-renderer-api</artifactId>
             <version>2.0.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-api</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
         </dependency>
-        
-          <dependency>
-              <groupId>org.apache.httpcomponents</groupId>
-              <artifactId>httpclient</artifactId>
-              <version>4.5.6</version>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>provided</scope>
         </dependency>
 
-          <dependency>
-              <groupId>com.google.code.gson</groupId>
-              <artifactId>gson</artifactId>
-              <version>2.8.5</version>
-              <scope>compile</scope>
-          </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -93,7 +122,7 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.5.0.1254</version>
             </plugin>
         </plugins>
     </build>

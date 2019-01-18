@@ -1,12 +1,13 @@
-<atlassian-plugin key="com.ullink.jira.slackit" name="Slack It" plugins-version="2">
+<atlassian-plugin key="com.ullink.jira.slackit" name="${project.name}" plugins-version="2">
     <plugin-info>
-        <description>Link your Jira issues and you Slack channels to create interactive and efficient discussions</description>
+        <description>${project.description}</description>
         <version>${project.version}</version>
 		<vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
         <param name="plugin-banner">images/pluginLogo.png</param>
-		<param name="configure.url">/secure/SlackitSetup!default.jspa</param>        
+		<param name="configure.url">/secure/SlackitSetup!default.jspa</param>
+		<param name="atlassian-data-center-compatible">true</param>
     </plugin-info>
     
     <servlet name="Slack OAuth Servlet" key="slackOauthCallback" class="com.ullink.jira.slackit.servlet.SlackOAuthCalbackServlet">
