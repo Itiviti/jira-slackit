@@ -145,7 +145,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         }
         if (jiraUser == null) {
             loadingErrorCollection.addErrorMessage("JIRA user for slack is not defined or unknown for key " + SLACK_IT_JIRA_USER + " and value '" + userkey + "'");
-            return;
         }
     }
 
