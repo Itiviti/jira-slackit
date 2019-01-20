@@ -37,7 +37,7 @@ span#channelSlack-header-chanstatus {
     margin: 0 5px;
 }
 div#channelSlack-members {
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 .hopInIcon {
     width: 22px;

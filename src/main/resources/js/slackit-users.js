@@ -336,7 +336,8 @@ var SlackItClient = (function () {
         AJS.$.each(guestList, function(key, e) {
             var closeKey = key + '-close';
             if (displayedEmails.indexOf(e.email) < 0) {
-                var item = '<span id="' + key + '" class="aui-label aui-label-closeable">' + e.name + '<span id="' + closeKey + '" class="aui-icon aui-icon-close" ></span></span>';
+                var item = '<span id="' + key + '" class="aui-label aui-label-closeable">' + e.name +
+                    '<span id="' + closeKey + '" class="aui-icon aui-icon-close" ></span></span>';
                 body += item + '&nbsp;';
                 displayedEmails.push(e.email);
             }

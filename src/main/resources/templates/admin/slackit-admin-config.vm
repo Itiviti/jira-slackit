@@ -16,13 +16,13 @@
         </tbody>
     </table> 
     
-      <table class="aui"/><caption>File content</caption>
+      <table class="aui"><caption>File content</caption>
           <tbody>
             #foreach ($mapEntry in $action.slackItConfigurationHolder.getProperties().entrySet())
                 <tr><td width="40%"><b>$mapEntry.key</b></td><td width="60%">$mapEntry.value</td></tr>
             #end
-        </tbody>
-    </table>
+          </tbody>
+      </table>
     <br/>
     <div class="aui-buttons">
         <a class="aui-button" id="reload-file" onclick="reloadFile();">Reload from file</a>
