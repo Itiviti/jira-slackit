@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import com.atlassian.jira.issue.customfields.impl.MultiUserCFType;
+import com.atlassian.jira.issue.customfields.impl.UserCFType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.atlassian.crowd.embedded.api.Group;
@@ -26,8 +28,6 @@ import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.customfields.impl.MultiUserCFType;
-import com.atlassian.jira.issue.customfields.impl.UserCFType;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.link.IssueLink;
 import com.atlassian.jira.issue.link.IssueLinkManager;
@@ -322,7 +322,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
      * @param issue the issue to analyze
      * @return a list of Jira users
      */
-    @SuppressWarnings("unchecked")
     public Set<ApplicationUser> getCustomFieldUsersForChannelMembers(Issue issue) {
         Set<ApplicationUser> members = new HashSet<>();
         for (CustomField cf : channelMembersCustomfields) {
