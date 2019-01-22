@@ -448,7 +448,7 @@ var SlackItClient = (function () {
                     AJS.$('#status-channel-created').show();
                     _this.onSlackItDialogSubmitClickedDoInvitePhase(slackData, channelName, guestList, createData.channelId);
                     return;
-                } else if (createData.error == "name_taken") {
+                } else if (createData.error === "name_taken") {
                     // Overcome channel already exists
                     console.log('Channel "#' + channelName + '" already exists. Re resolve channel id...');
                     AJS.$('#status-channel-creating-spinner').spinStop();
@@ -726,8 +726,7 @@ var SlackItClient = (function () {
         var hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
         var min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
         var sec = a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds();
-        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
-        return time;
+        return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     };
 
     SlackItClient.prototype.toggleSlackAuthorization = function(showConnect) {
