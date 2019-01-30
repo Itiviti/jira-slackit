@@ -1,12 +1,12 @@
 ##Commented as it not works in the search view, the js is not included 
 ##$webResourceManager.requireResourcesForContext("slackit-resources")
 
-#if (!$token)
+#if (!${token})
     #set ($token = "")
 #end
 
 <div id="slackAuthorization" style="display: none;">
-It seems you never used Slack It, it first requires authorization to communicate to Slack: <a href="${contextPath}/plugins/servlet/slackAuthorization?requestToken=$baseUrl">Setup access</a>
+It seems you never used Slack It, it first requires authorization to communicate to Slack: <a href="${contextPath}/plugins/servlet/slackAuthorization?requestToken=${baseUrl}">Setup access</a>
 </div>
 
 <button class="aui-button" id="createSlack" style="display: none;">
@@ -122,7 +122,7 @@ It seems you never used Slack It, it first requires authorization to communicate
                         </div>
                     </div>
                     <div class="field-group">
-                        <label for="slack-invite-guestsli   st">Participants list:</label>
+                        <label for="slack-invite-guestslist">Participants list:</label>
                         <div id="slack-invite-guestslist"></div>
                     </div>
                 </div>
@@ -144,12 +144,12 @@ It seems you never used Slack It, it first requires authorization to communicate
 
 <script>
     var slackItContext = {
-        slackApiBaseUrl: '$slackApiBaseUrl',
-        slackBaseUrl: '$slackBaseUrl',
-        token: '$token',
-        slackChannelId: '$slackChannelId',
-        jiraIssueKey: '$issue.key',
-        jira_membersStr: '$jiraMembers',
+        slackApiBaseUrl: '${slackApiBaseUrl}',
+        slackBaseUrl: '${slackBaseUrl}',
+        token: '${token}',
+        slackChannelId: '${slackChannelId}',
+        jiraIssueKey: '${issue.key}',
+        jira_membersStr: '${jiraMembers}',
         jira_members: [],
         servletLinkSlackChannelURL: '${contextPath}/plugins/servlet/slackAuthorization?action=setChannelId',
     };

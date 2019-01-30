@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import com.atlassian.jira.issue.customfields.impl.MultiUserCFType;
+import com.atlassian.jira.issue.customfields.impl.UserCFType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.atlassian.crowd.embedded.api.Group;
@@ -26,8 +28,6 @@ import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.customfields.impl.MultiUserCFType;
-import com.atlassian.jira.issue.customfields.impl.UserCFType;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.link.IssueLink;
 import com.atlassian.jira.issue.link.IssueLinkManager;
@@ -145,7 +145,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         }
         if (jiraUser == null) {
             loadingErrorCollection.addErrorMessage("JIRA user for slack is not defined or unknown for key " + SLACK_IT_JIRA_USER + " and value '" + userkey + "'");
-            return;
         }
     }
 
@@ -153,7 +152,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         LOG.info("Loading issue links to use for channel members candidates");
         channelMembersIssueLinks = Utils.parseLinks(getProperty(SLACK_IT_MEMBERS_ISSUELINKS));
         LOG.info("Loading done");
-        return;
     }
 
     private void loadChannelMembersCustomfields(ErrorCollection loadingErrorCollection) {
@@ -192,7 +190,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
         CustomField cf = customFieldManager.getCustomFieldObject(rawID2);
         if (cf == null || !(cf.getCustomFieldType() instanceof SlackChannelCustomField)) {
             loadingErrorCollection.addErrorMessage("Cannot load the slack it custom field identified by '" + rawID2 + "'. Field is either unknown or not of the right type ");
-            return;
         } else {
             slackItChannelIdCF = cf;
             LOG.info("SlackIt customfield loaded as " + slackItChannelIdCF.getName() + " / " + slackItChannelIdCF.getId());
@@ -220,12 +217,10 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
             return null;
         }
 
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                LOG.warn("Exception when closing file stream :" + e.getMessage(), e);
-            }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            LOG.warn("Exception when closing file stream :" + e.getMessage(), e);
         }
         if (propsFromFile.isEmpty()) {
             LOG.warn("Empty porperties file loaded");
@@ -327,7 +322,6 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
      * @param issue the issue to analyze
      * @return a list of Jira users
      */
-    @SuppressWarnings("unchecked")
     public Set<ApplicationUser> getCustomFieldUsersForChannelMembers(Issue issue) {
         Set<ApplicationUser> members = new HashSet<>();
         for (CustomField cf : channelMembersCustomfields) {
@@ -344,7 +338,7 @@ public class SlackItConfigurationHolderImpl implements SlackItConfigurationHolde
      * Retrieve the list of Jira users related to the linked issues defined in properties To be used as candidate for channel members at creation
      * 
      * @param issue Issue object
-     * @return
+     * @return Set<ApplicationUser> ApplicationUser object
      */
     public Set<ApplicationUser> getLinkedIssuesUsersForChannelMembers(Issue issue) {
         Set<ApplicationUser> members = new HashSet<>();

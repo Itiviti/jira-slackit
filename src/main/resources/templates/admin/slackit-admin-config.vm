@@ -6,23 +6,23 @@
             </tr>
         </thead>
           <tbody>
-            <tr><td width="40%"><b>Slack base Url</b></td><td width="60%">$action.slackItConfigurationHolder.getSlackBaseUrl()</td></tr>
-            <tr><td width="40%"><b>Slack Api Url</b></td><td width="60%">$action.slackItConfigurationHolder.getSlackApiBaseUrl()</td></tr>
-            <tr><td width="40%"><b>Slack channel customfield</b></td><td width="60%">$action.slackItConfigurationHolder.getSlackChannelCustomField()</td></tr>
-            <tr><td width="40%"><b>Slackbot Jira user</b></td><td width="60%">$action.slackItConfigurationHolder.getJIRAUserForSlack()</td></tr>
-            <tr><td width="40%"><b>Visibility of slackbot comments</b></td><td width="60%">$action.slackItConfigurationHolder.getCommentVisibility()</td></tr>
-            <tr><td width="40%"><b>User customfields for addtional members</b></td><td width="60%">$action.slackItConfigurationHolder.getCustomfieldsForChannelMembers()</td></tr>
-            <tr><td width="40%"><b>Proxy setup</b></td><td width="60%">$action.slackItConfigurationHolder.getProxyAsString()</td></tr>
+            <tr><td width="40%"><b>Slack base Url</b></td><td width="60%">${action.slackItConfigurationHolder.getSlackBaseUrl()}</td></tr>
+            <tr><td width="40%"><b>Slack Api Url</b></td><td width="60%">${action.slackItConfigurationHolder.getSlackApiBaseUrl()}</td></tr>
+            <tr><td width="40%"><b>Slack channel customfield</b></td><td width="60%">${action.slackItConfigurationHolder.getSlackChannelCustomField()}</td></tr>
+            <tr><td width="40%"><b>Slackbot Jira user</b></td><td width="60%">${action.slackItConfigurationHolder.getJIRAUserForSlack()}</td></tr>
+            <tr><td width="40%"><b>Visibility of slackbot comments</b></td><td width="60%">${action.slackItConfigurationHolder.getCommentVisibility()}</td></tr>
+            <tr><td width="40%"><b>User customfields for addtional members</b></td><td width="60%">${action.slackItConfigurationHolder.getCustomfieldsForChannelMembers()}</td></tr>
+            <tr><td width="40%"><b>Proxy setup</b></td><td width="60%">${action.slackItConfigurationHolder.getProxyAsString()}</td></tr>
         </tbody>
     </table> 
     
-      <table class="aui"/><caption>File content</caption>
+      <table class="aui"><caption>File content</caption>
           <tbody>
             #foreach ($mapEntry in $action.slackItConfigurationHolder.getProperties().entrySet())
-                <tr><td width="40%"><b>$mapEntry.key</b></td><td width="60%">$mapEntry.value</td></tr>
+                <tr><td width="40%"><b>${mapEntry.key}</b></td><td width="60%">${mapEntry.value}</td></tr>
             #end
-        </tbody>
-    </table>
+          </tbody>
+      </table>
     <br/>
     <div class="aui-buttons">
         <a class="aui-button" id="reload-file" onclick="reloadFile();">Reload from file</a>

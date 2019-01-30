@@ -139,7 +139,6 @@ var HttpRxClient = (function () {
             });
             subject.onCompleted();
         });
-
         return subject;
     };
 
@@ -199,6 +198,29 @@ var HttpRxClient = (function () {
 
         return subject;
     };
+
+    HttpRxClient.prototype.setTopicAsJiraLinkToChannelObservable = function (channelId, topic, token, slackApiBaseUrl) {
+        var subject = new Rx.AsyncSubject();
+        AJS.$.getJSON(slackApiBaseUrl + "/channels.setTopic?token=" + token + "&channel=" + channelId + "&topic=" + topic, function(json) {
+            if (json.error) {
+                subject.onNext({
+                    ok: false,
+                    error: json.error
+                });
+                subject.onCompleted();
+                return;
+            }
+
+            subject.onNext({
+                ok: true,
+                topic: json.topic
+            });
+            subject.onCompleted();
+        });
+
+        return subject;
+    };
+
 
     return HttpRxClient;
 }());
@@ -314,7 +336,8 @@ var SlackItClient = (function () {
         AJS.$.each(guestList, function(key, e) {
             var closeKey = key + '-close';
             if (displayedEmails.indexOf(e.email) < 0) {
-                var item = '<span id="' + key + '" class="aui-label aui-label-closeable">' + e.name + '<span id="' + closeKey + '" class="aui-icon aui-icon-close" ></span></span>';
+                var item = '<span id="' + key + '" class="aui-label aui-label-closeable">' + e.name +
+                    '<span id="' + closeKey + '" class="aui-icon aui-icon-close" ></span></span>';
                 body += item + '&nbsp;';
                 displayedEmails.push(e.email);
             }
@@ -425,7 +448,7 @@ var SlackItClient = (function () {
                     AJS.$('#status-channel-created').show();
                     _this.onSlackItDialogSubmitClickedDoInvitePhase(slackData, channelName, guestList, createData.channelId);
                     return;
-                } else if (createData.error == "name_taken") {
+                } else if (createData.error === "name_taken") {
                     // Overcome channel already exists
                     console.log('Channel "#' + channelName + '" already exists. Re resolve channel id...');
                     AJS.$('#status-channel-creating-spinner').spinStop();
@@ -508,6 +531,18 @@ var SlackItClient = (function () {
 
     SlackItClient.prototype.onSlackItInvitePhaseInviteUser = function(self, user, channelId, channelName, nbGuests) {
         var _this = self;
+        var topic = AJS.params.baseURL + '/browse/' + _this.context.jiraIssueKey;
+        _this.rxClient.setTopicAsJiraLinkToChannelObservable(channelId, topic, _this.context.token, _this.context.slackApiBaseUrl).subscribe(
+            function(topicSetData) {
+                if (topicSetData.ok) {
+                    console.log('Topic has been set for "#' + channelName + '"');
+                    }
+            },
+            function(error) {
+                console.log('Error: ' + error);
+            },
+            function() {}
+        );
         _this.rxClient.inviteSlackUserToChannelObservable(channelId, user.slackId, _this.context.token, _this.context.slackApiBaseUrl).subscribe(
             function(inviteData) {
                 if (!inviteData.error || inviteData.error == 'already_in_channel' || inviteData.error == 'cant_invite_self') {
@@ -691,8 +726,7 @@ var SlackItClient = (function () {
         var hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
         var min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
         var sec = a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds();
-        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
-        return time;
+        return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     };
 
     SlackItClient.prototype.toggleSlackAuthorization = function(showConnect) {
