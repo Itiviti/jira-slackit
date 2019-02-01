@@ -1,7 +1,6 @@
 Overview
 ============
 
-# Overview
 This is a Jira plugin allowing you to integrate Slack channels and Jira issues in an easy and non-intrusive way (much like what Atlassian do with hipchat)
 
 From any Jira issue, you can:
