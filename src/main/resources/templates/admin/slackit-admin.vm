@@ -14,7 +14,6 @@
             </div>
         </div>
     </header>
-    <body>
     <div id="action-message"></div>
     <div id="slackit-tabs" class="aui-tabs horizontal-tabs" role="application">
         <ul class="tabs-menu" role="tablist">
@@ -27,10 +26,6 @@
                 #parse("templates/admin/slackit-admin-config.vm")
             </div>
         </div>
-    </div>        
-    
-    </body>
-    <script>
-    
-    </script>
+    </div>
+  </body>
 </html>

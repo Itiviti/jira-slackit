@@ -40,7 +40,7 @@
     isFunction = Rx.helpers.isFunction = (function () {
 
       var isFn = function (value) {
-        return typeof value == 'function' || false;
+        return typeof value === 'function' || false;
       };
 
       // fallback for older versions of Chrome and Safari
@@ -2760,7 +2760,7 @@ var ObserveOnObservable = (function (__super__) {
 
   /**
   * This method creates a new Observable sequence from an array-like or iterable object.
-  * @param {Any} arrayLike An array-like or iterable object to convert to an Observable sequence.
+  * @param iterable
   * @param {Function} [mapFn] Map function to call on every element of the array.
   * @param {Any} [thisArg] The context to use calling the mapFn if provided.
   * @param {Scheduler} [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.

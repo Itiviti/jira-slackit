@@ -76,7 +76,7 @@ public class SlackPanel extends AbstractJiraContextProvider {
         }
 
         List<ApplicationUser> watchers = ComponentAccessor.getWatcherManager().getWatchers(issue, Locale.ENGLISH);
-        if (watchers != null) {
+        if (!watchers.isEmpty()) {
             for (ApplicationUser watcher : watchers) {
                 jiraMembers.addWatcher(JiraMember.getJiraMember(watcher));
             }

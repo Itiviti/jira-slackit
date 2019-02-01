@@ -69,6 +69,10 @@ public interface SlackItConfigurationHolder {
 
     public String getCommentGroupID();
 
+    public void onStart();
+
+    public void onStop();
+
     String getProxyAsString();
 
     String getCommentVisibility();
